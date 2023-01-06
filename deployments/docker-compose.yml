@@ -1,0 +1,84 @@
+version: "3.8"
+
+services:
+  mail_microservice:
+    container_name: mail_microservice
+    build:
+      context: ../
+      dockerfile: build/package/Dockerfile
+    ports:
+      # ???
+      - "50001:50001"
+      - "5002:5000"
+      - "5555:5555"
+      - "7070:7070"
+    environment:
+      # ???
+      - PORT=5000
+    depends_on:
+      - rabbitmq
+      - postgesql
+    restart: always
+    volumes:
+      - ./:/app
+    networks:
+      - microservice_network
+
+  postgesql:
+    image: postgres:13-alpine
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mails_db
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - microservice_network
+
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    container_name: rabbit
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - microservice_network
+  
+  elasticsearch:
+    container_name: "elasticsearch"
+    image: elasticsearch:7.17.7
+    environment:
+      - "discovery.type=single-node"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - microservice_network
+
+  kibana:
+    container_name: "kibana"
+    image: kibana:7.17.7
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS="http://elasticsearch:9200"
+    networks:
+      - microservice_network
+  
+  logstash: 
+    container_name: "logstash"
+    image: logstash:7.17.7
+    command: sh -c "rm -f /usr/share/logstash/pipeline/logstash.conf"
+    volumes: 
+      - ./config/logstash-conf.conf:/usr/share/logstash/pipeline/
+    networks:
+      - microservice_network
+
+
+networks:
+  microservice_network:
+    driver: bridge

@@ -1,0 +1,33 @@
+variables:
+  GOLANG_VERSION: 1.18.9
+
+.install-linter: &install-linter
+  - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.50.1
+
+stages:
+  - lint
+  - test 
+  - build
+
+lint:
+  stage: lint
+  image: golang:$GOLANG_VERSION
+  before_script:
+    *install-linter
+  script:
+    - golangci-lint run ./...
+
+test:
+  stage: test 
+  image: golang:$GOLANG_VERSION
+  script:
+    - go test -v ./...
+
+build: 
+  stage: build
+  image: golang:$GOLANG_VERSION
+  script: 
+    - ...
+  rules:
+    - if: $CI_COMMIT_BRANCH !~ "main"
+      when: never
