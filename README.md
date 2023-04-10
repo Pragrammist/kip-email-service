@@ -25,9 +25,9 @@ make run
 - [ ] Docs
 - [ ] Helm chart
 - [ ] Alertmanager & Prometheus 
-- [ ] Grpc server & repository tests
 - [ ] Tracer
 - [ ] CI/CD and scripts
-- [ ] Editor config
+- [x] Grpc server & repository tests
+- [x] Editor config
 - [ ] Remove rabbitmq
 - [ ] Logger mode

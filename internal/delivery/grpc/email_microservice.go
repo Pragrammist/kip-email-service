@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"go-email/config"
-	"go-email/internal/database"
 	"go-email/internal/mailer"
 	"go-email/internal/models"
 	"go-email/internal/validator"
@@ -42,11 +41,10 @@ type Server struct {
 	pb.UnimplementedMailerServiceServer
 	mailer *mailer.Mailer
 	cfg    *config.Config
-	repo   *database.Resository
 }
 
-func NewServer(cfg *config.Config, mailer *mailer.Mailer, repo *database.Resository) *Server {
-	return &Server{cfg: cfg, mailer: mailer, repo: repo}
+func NewServer(cfg *config.Config, mailer *mailer.Mailer) *Server {
+	return &Server{cfg: cfg, mailer: mailer}
 }
 
 func (s *Server) SendEmails(ctx context.Context, r *pb.EmailRequest) (*pb.EmailResponse, error) {
@@ -72,10 +70,10 @@ func (s *Server) SendEmails(ctx context.Context, r *pb.EmailRequest) (*pb.EmailR
 		return nil, err
 	}
 
-	if err := s.repo.CreateEmail(email); err != nil {
-		emailsSavedFailure.Inc()
-		return nil, err
-	}
+	//if err := s.repo.CreateEmail(email); err != nil {
+	//  emailsSavedFailure.Inc()
+	//	return nil, err
+	//}
 
 	emailsSuccess.Inc()
 	emailsSavedSuccessfully.Inc()
