@@ -22,11 +22,13 @@ import (
 func Run() {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 
+
+	// Paste credentials here
 	conf := &config.Config{Smtp: config.Smtp{
-		Host:     "smtp.mail.yahoo.com",
-		Port:     587,
-		User:     "ignat.belousov2000@yahoo.com",
-		Password: "icxxjjceonicsurn",
+		Host:     "",
+		Port:     0,
+		User:     "",
+		Password: "",
 	}}
 
 	// Init logger
